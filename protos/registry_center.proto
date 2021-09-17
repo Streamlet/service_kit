@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+import "google/protobuf/descriptor.proto";
+import "google/protobuf/empty.proto";
+
+package cpp_micro_service;
+
+message ServiceDefinition {
+  string full_name = 1;
+  int32 port = 2;
+  google.protobuf.ServiceDescriptorProto proto = 3;
+}
+
+message ServiceIdentify {
+  string full_name = 1;
+}
+
+message RegisterResult {
+  bool ok = 1;
+  string message = 2;
+}
+
+service ServiceRegisterer {
+  rpc Register (ServiceDefinition) returns (RegisterResult) {}
+  rpc HeartBeat (ServiceIdentify) returns (google.protobuf.Empty) {}
+  rpc Unregister (ServiceIdentify) returns (google.protobuf.Empty) {}
+}
+
+message ServiceProvider {
+  string peer = 1;
+}
+
+service ServiceQuerier {
+  rpc Query(ServiceIdentify) returns (ServiceProvider) {}
+}
