@@ -55,6 +55,8 @@ add_custom_command(
 
 # Include generated *.pb.h files
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../registry_center/include")
+
 include_directories("../../third_party/boost/built/include")
 link_directories("../../third_party/boost/built/lib")
 
