@@ -19,3 +19,8 @@ pushd $DIR/sample/helloworld/cmake/build
 cmake -DCMAKE_PREFIX_PATH=$GRPC_INSTALL_DIR $CMAKE_EXTRA_FLAGS ../..
 make -j
 popd
+
+mkdir -p $DIR/bin
+cp -f $DIR/registry_center/cmake/build/registry_center $DIR/bin/
+cp -f $DIR/sample/helloworld/cmake/build/greeter_server $DIR/bin/
+cp -f $DIR/sample/helloworld/cmake/build/greeter_client $DIR/bin/

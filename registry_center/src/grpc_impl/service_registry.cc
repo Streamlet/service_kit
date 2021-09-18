@@ -1,4 +1,5 @@
 #include "service_registry.h"
+#include "log.h"
 
 namespace registry_center {
 namespace grpc_impl {
@@ -36,14 +37,14 @@ ServiceRegistry::~ServiceRegistry() {}
     ::grpc::ServerContext* context,
     const service_kit::ServiceDefinitionWithSignature* request,
     service_kit::RegisterResult* response) {
-  std::cout << "Service " << request->name() << " register from "
-            << context->peer() << std::endl;
+  TRACE() << "Service " << request->name() << " register from "
+          << context->peer() << std::endl;
 
   std::string address;
   if (!PeerPortToAddress(context->peer(), request->port(), &address)) {
     response->set_ok(false);
     response->set_message("internal error");
-    std::cout << "cannot extract pi from peer string '" + context->peer() + "'";
+    ERROR() << "cannot extract pi from peer string '" + context->peer() + "'";
     return grpc::Status::OK;
   }
 
@@ -51,9 +52,10 @@ ServiceRegistry::~ServiceRegistry() {}
   if (!request->proto().SerializeToString(&signature)) {
     response->set_ok(false);
     response->set_message("internal error");
-    std::cout << "cannot serialize service " + request->proto().name();
+    ERROR() << "cannot serialize service " + request->proto().name();
     return grpc::Status::OK;
   }
+  DEBUG() << "Signature: " << signature << std::endl;
 
   if (!mgr_.AddService(request->name(), address, signature)) {
     response->set_ok(false);
@@ -63,8 +65,8 @@ ServiceRegistry::~ServiceRegistry() {}
   }
 
   response->set_ok(true);
-  std::cout << "Service provider " << address << " successfully registered for "
-            << request->name() << std::endl;
+  INFO() << "Service provider " << address << " successfully registered for "
+         << request->name() << std::endl;
 
   return grpc::Status::OK;
 }
@@ -73,8 +75,8 @@ grpc::Status ServiceRegistry::HeartBeat(
     grpc::ServerContext* context,
     const service_kit::ServiceDefinition* request,
     google::protobuf::Empty* response) {
-  std::cout << "Service " << request->name() << " heart beated from "
-            << context->peer() << std::endl;
+  TRACE() << "Service " << request->name() << " heart beated from "
+          << context->peer() << std::endl;
 
   return grpc::Status::OK;
 }
@@ -83,19 +85,19 @@ grpc::Status ServiceRegistry::Unregister(
     grpc::ServerContext* context,
     const service_kit::ServiceDefinition* request,
     google::protobuf::Empty* response) {
-  std::cout << "Service " << request->name() << " stopped from "
-            << context->peer() << std::endl;
+  TRACE() << "Service " << request->name() << " stopped from "
+          << context->peer() << std::endl;
 
   std::string address;
   if (!PeerPortToAddress(context->peer(), request->port(), &address)) {
-    std::cout << "cannot extract pi from peer string '" + context->peer() + "'";
+    ERROR() << "cannot extract pi from peer string '" + context->peer() + "'";
     return grpc::Status::OK;
   }
 
   if (!mgr_.RemoveService(request->name(), address)) {
   }
-  std::cout << "Service provider " << address << " successfully removed for "
-            << request->name() << std::endl;
+  INFO() << "Service provider " << address << " successfully removed for "
+         << request->name() << std::endl;
 
   return grpc::Status::OK;
 }
