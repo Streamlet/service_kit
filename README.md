@@ -26,13 +26,13 @@
 
 注册中心：
 ```bash
-registry_center/cmake/build/registry_center [--port=50050]
+bin/registry_center [--port=50050]
 ```
 服务端
 ```bash
-sample/helloworld/cmake/build/greeter_server [--registry_center=localhost:50050] [--port=50051]
+bin/greeter_server [--registry_center=localhost:50050] [--port=50051]
 ```
 客户端
 ```bash
-sample/helloworld/cmake/build/greeter_client [--registry_center=localhost:50050]
+bin/greeter_client [--registry_center=localhost:50050]
 ```

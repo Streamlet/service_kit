@@ -2,8 +2,9 @@
 
 #include <cstdlib>
 #include <ctime>
-#include <iostream>
 #include <sstream>
+
+#include "log.h"
 
 namespace registry_center {
 namespace core {
@@ -16,32 +17,32 @@ ServiceManager::~ServiceManager() {}
 bool ServiceManager::AddService(const std::string& name,
                                 const std::string& address,
                                 const std::string& signature) {
-  std::cout << "Adding service: " << name << std::endl;
+  TRACE() << "Adding service: " << name << std::endl;
 
   auto it_signature = service_name_signature_map_.find(name);
   if (it_signature == service_name_signature_map_.end()) {
     service_name_signature_map_.insert({name, signature});
   } else {
     if (it_signature->second != signature) {
-      std::cout << "Signature not match" << std::endl;
+      ERROR() << "Signature not match" << std::endl;
       return false;
     }
   }
 
   service_name_addresses_map_[name].insert(address);
-  // std::cout << "current registey: " << std::endl << DumpResgistry();
+  DEBUG() << "current registey: " << std::endl << DumpResgistry();
 
   return true;
 }
 
 bool ServiceManager::QueryService(const std::string& name,
                                   std::string* address) {
-  std::cout << "Querying service: " << name << std::endl;
-  // std::cout << "current registey: " << std::endl << DumpResgistry();
+  TRACE() << "Querying service: " << name << std::endl;
+  DEBUG() << "current registey: " << std::endl << DumpResgistry();
 
   auto it = service_name_addresses_map_.find(name);
   if (it == service_name_addresses_map_.end() || it->second.empty()) {
-    std::cout << "Not found" << std::endl;
+    WARNING() << "Not found" << std::endl;
     return false;
   }
 
@@ -56,23 +57,23 @@ bool ServiceManager::QueryService(const std::string& name,
     ++c;
   }
 
-  std::cout << "Found service: " << *address << std::endl;
+  TRACE() << "Found service: " << *address << std::endl;
   return true;
 }
 
 bool ServiceManager::RemoveService(const std::string& name,
                                    const std::string& address) {
-  std::cout << "Removing service: " << name << std::endl;
+  TRACE() << "Removing service: " << name << std::endl;
 
   auto it_addresses = service_name_addresses_map_.find(name);
   if (it_addresses == service_name_addresses_map_.end()) {
-    std::cout << "Not found" << std::endl;
+    WARNING() << "Not found" << std::endl;
     return false;
   }
 
   size_t removed = it_addresses->second.erase(address);
   if (removed == 0) {
-    std::cout << "No address removed" << std::endl;
+    ERROR() << "No address removed" << std::endl;
     return false;
   }
 
@@ -81,7 +82,7 @@ bool ServiceManager::RemoveService(const std::string& name,
     service_name_signature_map_.erase(name);
   }
 
-  // std::cout << "current registey: " << std::endl << DumpResgistry();
+  DEBUG() << "current registey: " << std::endl << DumpResgistry();
   return true;
 }
 
