@@ -48,6 +48,9 @@ add_executable(registry_center ${SOURCES})
 target_link_libraries(registry_center
   rc_grpc_proto
   boost_program_options
+  boost_filesystem
+  boost_thread
+  boost_regex
   boost_log
   boost_log_setup
   ${_REFLECTION}

@@ -1,6 +1,5 @@
 #pragma once
 
-#define BOOST_LOG_DYN_LINK 1
 #include <boost/log/trivial.hpp>
 
 #define TRACE() BOOST_LOG_TRIVIAL(trace)
