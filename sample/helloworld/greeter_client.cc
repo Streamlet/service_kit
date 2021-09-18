@@ -1,45 +1,44 @@
+#include <grpcpp/grpcpp.h>
+#include <boost/program_options.hpp>
 #include <iostream>
 #include <memory>
 #include <string>
 
-#include <google/protobuf/descriptor.h>
-#include <grpcpp/grpcpp.h>
-#include <boost/program_options.hpp>
-
 #include "helloworld.grpc.pb.h"
-#include "registry_center.grpc.pb.h"
+#include "service_kit/service_manager_client.h"
 
-class ServiceManagerClient {
- public:
-  ServiceManagerClient(std::shared_ptr<grpc::Channel> channel)
-      : stub_(service_kit::ServiceManager::NewStub(channel)) {}
+const char* OPTION_HELP = "help";
+const char* OPTION_REGISTRY_CENTER = "registry_center";
 
-  // Assembles the client's payload, sends it and presents the response back
-  // from the server.
-  template <typename ServiceType>
-  std::string Query() {
-    // Data we are sending to the server.
-    service_kit::ServiceIdentify service_identify;
-    service_identify.set_full_name(ServiceType::service_full_name());
+bool ParseCommandLine(int argc,
+                      char** argv,
+                      boost::program_options::variables_map& vm) {
+  try {
+    boost::program_options::options_description desc("Allowed options");
+    desc.add_options()(OPTION_HELP, "produce help message");
+    desc.add_options()(
+        OPTION_REGISTRY_CENTER,
+        boost::program_options::value<std::string>()->default_value(
+            "localhost:50050"),
+        "registry center address");
+    boost::program_options::store(
+        boost::program_options::parse_command_line(argc, argv, desc), vm);
+    boost::program_options::notify(vm);
 
-    service_kit::ServiceProvider service_provider;
-    grpc::ClientContext context;
-
-    grpc::Status status =
-        stub_->Query(&context, service_identify, &service_provider);
-
-    if (status.ok()) {
-      return service_provider.peer();
-    } else {
-      std::cout << status.error_code() << ": " << status.error_message()
-                << std::endl;
-      return "";
+    if (vm.count(OPTION_HELP)) {
+      std::cout << desc << std::endl;
+      return false;
     }
+  } catch (boost::program_options::unknown_option e) {
+    std::cout << e.what() << std::endl;
+    return false;
+  } catch (boost::program_options::invalid_option_value e) {
+    std::cout << e.what() << std::endl;
+    return false;
   }
 
- private:
-  std::unique_ptr<service_kit::ServiceManager::Stub> stub_;
-};
+  return true;
+}
 
 class GreeterClient {
  public:
@@ -76,38 +75,6 @@ class GreeterClient {
  private:
   std::unique_ptr<helloworld::Greeter::Stub> stub_;
 };
-const char* OPTION_HELP = "help";
-const char* OPTION_REGISTRY_CENTER = "registry_center";
-
-bool ParseCommandLine(int argc,
-                      char** argv,
-                      boost::program_options::variables_map& vm) {
-  try {
-    boost::program_options::options_description desc("Allowed options");
-    desc.add_options()(OPTION_HELP, "produce help message");
-    desc.add_options()(
-        OPTION_REGISTRY_CENTER,
-        boost::program_options::value<std::string>()->default_value(
-            "localhost:50050"),
-        "registry center address");
-    boost::program_options::store(
-        boost::program_options::parse_command_line(argc, argv, desc), vm);
-    boost::program_options::notify(vm);
-
-    if (vm.count(OPTION_HELP)) {
-      std::cout << desc << std::endl;
-      return false;
-    }
-  } catch (boost::program_options::unknown_option e) {
-    std::cout << e.what() << std::endl;
-    return false;
-  } catch (boost::program_options::invalid_option_value e) {
-    std::cout << e.what() << std::endl;
-    return false;
-  }
-
-  return true;
-}
 
 int main(int argc, char** argv) {
   boost::program_options::variables_map vm;
@@ -115,20 +82,22 @@ int main(int argc, char** argv) {
     return -1;
   }
 
-  std::string registry_center = vm[OPTION_REGISTRY_CENTER].as<std::string>();
+  std::string registry_center_address =
+      vm[OPTION_REGISTRY_CENTER].as<std::string>();
 
-  ServiceManagerClient service_manager_client(
-      grpc::CreateChannel(registry_center, grpc::InsecureChannelCredentials()));
-  std::string peer = service_manager_client.Query<helloworld::Greeter>();
-  if (peer.empty()) {
-    std::cout << "No service provider found from " << registry_center
+  registry_center::ServiceManagerClient service_manager_client(
+      grpc::CreateChannel(registry_center_address,
+                          grpc::InsecureChannelCredentials()));
+  std::string address;
+  if (!service_manager_client.Query<helloworld::Greeter>(&address)) {
+    std::cout << "No service provider found from " << registry_center_address
               << std::endl;
     return -1;
   }
-  std::cout << "Service provider: " << peer << std::endl;
+  std::cout << "Service provider: " << address << std::endl;
 
   GreeterClient greeter(
-      grpc::CreateChannel(peer, grpc::InsecureChannelCredentials()));
+      grpc::CreateChannel(address, grpc::InsecureChannelCredentials()));
   std::string user("world");
   std::string reply = greeter.SayHello(user);
   std::cout << "Greeter received: " << reply << std::endl;

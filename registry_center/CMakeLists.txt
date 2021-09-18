@@ -36,10 +36,15 @@ target_link_libraries(rc_grpc_proto
 
 # Include generated *.pb.h files
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
+
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 include_directories("../third_party/boost/built/include")
 link_directories("../third_party/boost/built/lib")
 
-add_executable(registry_center "registry_center.cc")
+file(GLOB_RECURSE SOURCES src/*)
+
+add_executable(registry_center ${SOURCES})
 target_link_libraries(registry_center
   rc_grpc_proto
   boost_program_options

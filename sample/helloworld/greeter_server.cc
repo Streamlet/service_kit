@@ -1,107 +1,13 @@
+#include <grpcpp/ext/proto_server_reflection_plugin.h>
+#include <grpcpp/grpcpp.h>
+#include <boost/program_options.hpp>
 #include <iostream>
 #include <memory>
 #include <string>
 
-#include <google/protobuf/descriptor.h>
-#include <grpcpp/ext/proto_server_reflection_plugin.h>
-#include <grpcpp/grpcpp.h>
-#include <grpcpp/health_check_service_interface.h>
-#include <boost/program_options.hpp>
-
 #include "helloworld.grpc.pb.h"
 #include "registry_center.grpc.pb.h"
-
-class ServiceRegistryClient {
- public:
-  ServiceRegistryClient(std::shared_ptr<grpc::Channel> channel)
-      : stub_(service_kit::ServiceRegistry::NewStub(channel)) {}
-
-  // Assembles the client's payload, sends it and presents the response back
-  // from the grpc::Server.
-  template <typename ServiceType>
-  bool Register(int32_t port) {
-    std::cout << "Registering service: " << ServiceType::service_full_name()
-              << std::endl;
-
-    const google::protobuf::ServiceDescriptor* service_descriptor =
-        google::protobuf::DescriptorPool::generated_pool()->FindServiceByName(
-            ServiceType::service_full_name());
-    google::protobuf::ServiceDescriptorProto* service_descriptor_proto =
-        new google::protobuf::ServiceDescriptorProto;
-    service_descriptor->CopyTo(service_descriptor_proto);
-
-    // Data we are sending to the grpc::Server.
-    service_kit::ServiceDefinition service_definition;
-    service_definition.set_full_name(ServiceType::service_full_name());
-    service_definition.set_port(port);
-    service_definition.set_allocated_proto(service_descriptor_proto);
-
-    service_kit::RegisterResult result;
-    grpc::ClientContext context;
-
-    grpc::Status status =
-        stub_->Register(&context, service_definition, &result);
-
-    if (status.ok()) {
-      std::cout << "Service registered." << std::endl;
-    } else {
-      std::cout << status.error_code() << ": " << status.error_message()
-                << std::endl;
-    }
-    return status.ok();
-  }
-
- private:
-  std::unique_ptr<service_kit::ServiceRegistry::Stub> stub_;
-};
-
-// Logic and data behind the grpc::Server's behavior.
-class GreeterServiceImpl final : public helloworld::Greeter::Service {
-  grpc::Status SayHello(grpc::ServerContext* context,
-                        const helloworld::HelloRequest* request,
-                        helloworld::HelloReply* reply) override {
-    std::cout << "helloworld::Greeter request from " << context->peer() << ": "
-              << request->name() << std::endl;
-
-    reply->set_message("Hello " + request->name() + " from " + context->peer());
-
-    return grpc::Status::OK;
-  }
-};
-
-void RunServer(const std::string& registry_center_address, uint16_t port) {
-  ServiceRegistryClient registry_center_client(grpc::CreateChannel(
-      registry_center_address, grpc::InsecureChannelCredentials()));
-
-  std::string server_address = "0.0.0.0:" + std::to_string(port);
-  GreeterServiceImpl service;
-
-  grpc::EnableDefaultHealthCheckService(true);
-  grpc::reflection::InitProtoReflectionServerBuilderPlugin();
-  grpc::ServerBuilder builder;
-  // Listen on the given address without any authentication mechanism.
-  builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
-  // Register "service" as the instance through which we'll communicate with
-  // clients. In this case it corresponds to an *synchronous* service.
-  builder.RegisterService(&service);
-  // Finally assemble the Server.
-  std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
-
-  // Register service to remote registry center
-  if (!registry_center_client.Register<helloworld::Greeter>(port)) {
-    std::cout << "failed to register service to " << registry_center_address
-              << std::endl;
-    server->Shutdown();
-    return;
-  }
-
-  std::cout << "Server listening on " << server_address << std::endl;
-
-  // Wait for the Server to shutdown. Note that some other thread must
-  // be responsible for shutting down the Server for this call to ever
-  // return.
-  server->Wait();
-}
+#include "service_kit/service_registry_client.h"
 
 const char* OPTION_HELP = "help";
 const char* OPTION_REGISTRY_CENTER = "registry_center";
@@ -139,6 +45,54 @@ bool ParseCommandLine(int argc,
   }
 
   return true;
+}
+
+// Logic and data behind the grpc::Server's behavior.
+class GreeterServiceImpl final : public helloworld::Greeter::Service {
+  grpc::Status SayHello(grpc::ServerContext* context,
+                        const helloworld::HelloRequest* request,
+                        helloworld::HelloReply* reply) override {
+    std::cout << "helloworld::Greeter request from " << context->peer() << ": "
+              << request->name() << std::endl;
+
+    reply->set_message("Hello " + request->name() + " from " + context->peer());
+
+    return grpc::Status::OK;
+  }
+};
+
+void RunServer(const std::string& registry_center_address, uint16_t port) {
+  registry_center::ServiceRegistryClient service_register(grpc::CreateChannel(
+      registry_center_address, grpc::InsecureChannelCredentials()));
+
+  std::string server_address = "0.0.0.0:" + std::to_string(port);
+  GreeterServiceImpl service;
+
+  grpc::EnableDefaultHealthCheckService(true);
+  grpc::reflection::InitProtoReflectionServerBuilderPlugin();
+  grpc::ServerBuilder builder;
+  // Listen on the given address without any authentication mechanism.
+  builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+  // Register "service" as the instance through which we'll communicate with
+  // clients. In this case it corresponds to an *synchronous* service.
+  builder.RegisterService(&service);
+  // Finally assemble the Server.
+  std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+
+  // Register service to remote registry center
+  if (!service_register.Register<helloworld::Greeter>(port)) {
+    std::cout << "failed to register service to " << registry_center_address
+              << std::endl;
+    server->Shutdown();
+    return;
+  }
+
+  std::cout << "Server listening on " << server_address << std::endl;
+
+  // Wait for the Server to shutdown. Note that some other thread must
+  // be responsible for shutting down the Server for this call to ever
+  // return.
+  server->Wait();
 }
 
 int main(int argc, char** argv) {
