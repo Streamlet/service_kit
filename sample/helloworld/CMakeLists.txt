@@ -4,7 +4,6 @@ project(HelloWorld C CXX)
 
 include(../../third_party/grpc/examples/cpp/cmake/common.cmake)
 
-
 # Proto file
 get_filename_component(rc_proto "../../protos/registry_center.proto" ABSOLUTE)
 get_filename_component(rc_proto_path "${rc_proto}" PATH)
@@ -56,6 +55,8 @@ add_custom_command(
 
 # Include generated *.pb.h files
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
+include_directories("../../third_party/boost/built/include")
+link_directories("../../third_party/boost/built/lib")
 
 # hw_grpc_proto
 add_library(hw_grpc_proto
@@ -75,6 +76,7 @@ foreach(_target
   target_link_libraries(${_target}
     hw_grpc_proto
     rc_grpc_proto
+    boost_program_options
     ${_REFLECTION}
     ${_GRPC_GRPCPP}
     ${_PROTOBUF_LIBPROTOBUF})

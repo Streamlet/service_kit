@@ -34,6 +34,14 @@ make -j
 make install
 popd
 
+echo "================================"
+echo "Building boost ..."
+BOOST_INSTALL_DIR=$DIR/third_party/boost/built
+
+pushd boost
+./bootstrap.sh --prefix=$BOOST_INSTALL_DIR --with-program_options
+./b2 install
+popd
 
 
 popd
