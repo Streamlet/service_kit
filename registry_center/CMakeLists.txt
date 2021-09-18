@@ -36,10 +36,13 @@ target_link_libraries(rc_grpc_proto
 
 # Include generated *.pb.h files
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
+include_directories("../third_party/boost/built/include")
+link_directories("../third_party/boost/built/lib")
 
 add_executable(registry_center "registry_center.cc")
 target_link_libraries(registry_center
   rc_grpc_proto
+  boost_program_options
   ${_REFLECTION}
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF})

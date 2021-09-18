@@ -1,34 +1,38 @@
-# C++ Micro Service Framework
+# ServiceKit
 
 旨在用 C++ 技术实现服务端微服务框架
 
-## 基本结构
-```
-+-----------------+
-| registry center |
-+-----------------+
-    ^           ^
-    | register  | query service
-    | (grpc)    | (grpc)
-    |           |
-+--------+      |
-| server |      |
-+--------+      |
-    ^           |
-    | biz api   |
-    | (grpc)    |
-    |           |
-+--------+      |
-| client |------+
-+--------+
+## 构建步骤
+
+### 下载第三方依赖
+
+```bash
+./fetch_third_party.sh
 ```
 
-## 基本设计
+### 编译第三方库
 
-框架定义或实现：
-1. 可直接运行的注册中心实体
-2. server、client 与注册中心的通讯协议
+```bash
+./build_third_party.sh
+```
 
-使用方定义或实现：
-1. server 与 client 之间的通讯协议
-2. 可运行的 server、client 实体
+### 编译示例程序
+
+```bash
+./build_sample.sh
+```
+
+### 运行示例程序
+
+注册中心：
+```bash
+registry_center/cmake/build/registry_center [--port=50050]
+```
+服务端
+```bash
+sample/helloworld/cmake/build/greeter_server [--registry_center=localhost:50050] [--port=50051]
+```
+客户端
+```bash
+sample/helloworld/cmake/build/greeter_client [--registry_center=localhost:50050]
+```
