@@ -39,8 +39,8 @@ echo "Building boost ..."
 BOOST_INSTALL_DIR=$DIR/third_party/boost/built
 
 pushd boost
-./bootstrap.sh --prefix=$BOOST_INSTALL_DIR --with-program_options --with-log
-./b2 install
+./bootstrap.sh
+./b2 install link=static --prefix=$BOOST_INSTALL_DIR --with-program_options --with-log
 popd
 
 
