@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 
-#include "helloworld.grpc.pb.h"
+#include "protos/helloworld.grpc.pb.h"
 #include "service_kit/service_manager_client.h"
 
 const char* OPTION_HELP = "help";
@@ -85,9 +85,8 @@ int main(int argc, char** argv) {
   std::string registry_center_address =
       vm[OPTION_REGISTRY_CENTER].as<std::string>();
 
-  registry_center::ServiceManagerClient service_manager_client(
-      grpc::CreateChannel(registry_center_address,
-                          grpc::InsecureChannelCredentials()));
+  service_kit::ServiceManagerClient service_manager_client(grpc::CreateChannel(
+      registry_center_address, grpc::InsecureChannelCredentials()));
   std::string address;
   if (!service_manager_client.Query<helloworld::Greeter>(&address)) {
     std::cout << "No service provider found from " << registry_center_address

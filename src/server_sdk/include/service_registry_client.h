@@ -3,9 +3,9 @@
 #include <google/protobuf/descriptor.h>
 #include <grpcpp/grpcpp.h>
 
-#include "registry_center.grpc.pb.h"
+#include "service_kit/registry_center.grpc.pb.h"
 
-namespace registry_center {
+namespace service_kit {
 
 class ServiceRegistryClient {
  public:
@@ -52,4 +52,4 @@ class ServiceRegistryClient {
   std::unique_ptr<service_kit::ServiceRegistry::Stub> stub_;
 };
 
-}  // namespace registry_center
+}  // namespace service_kit

@@ -1,4 +1,7 @@
 .*
+*.pb.h
+*.pb.cc
 /third_party/
 /**/cmake/build/
-/bin/
+/**/_build/
+/**/bin/

@@ -2,9 +2,9 @@
 
 #include <grpcpp/grpcpp.h>
 
-#include "registry_center.grpc.pb.h"
+#include "service_kit/registry_center.grpc.pb.h"
 
-namespace registry_center {
+namespace service_kit {
 
 class ServiceManagerClient {
  public:
@@ -43,4 +43,4 @@ class ServiceManagerClient {
   std::unique_ptr<service_kit::ServiceManager::Stub> stub_;
 };
 
-}  // namespace registry_center
+}  // namespace service_kit
