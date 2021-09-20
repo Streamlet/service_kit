@@ -8,7 +8,6 @@
 #include "grpc_impl/service_manager.h"
 #include "grpc_impl/service_registry.h"
 #include "log.h"
-#include "registry_center.grpc.pb.h"
 
 namespace registry_center {
 const char* OPTION_HELP = "help";

@@ -12,6 +12,9 @@ if [ ! -d grpc ]; then
         -b v1.40.0 https://github.com/grpc/grpc
 else
     echo exists
+    pushd grpc
+    git submodule update --recursive
+    popd
 fi
 
 echo "================================"

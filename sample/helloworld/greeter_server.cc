@@ -5,8 +5,7 @@
 #include <memory>
 #include <string>
 
-#include "helloworld.grpc.pb.h"
-#include "registry_center.grpc.pb.h"
+#include "protos/helloworld.grpc.pb.h"
 #include "service_kit/service_registry_client.h"
 
 const char* OPTION_HELP = "help";
@@ -62,7 +61,7 @@ class GreeterServiceImpl final : public helloworld::Greeter::Service {
 };
 
 void RunServer(const std::string& registry_center_address, uint16_t port) {
-  registry_center::ServiceRegistryClient service_register(grpc::CreateChannel(
+  service_kit::ServiceRegistryClient service_register(grpc::CreateChannel(
       registry_center_address, grpc::InsecureChannelCredentials()));
 
   std::string server_address = "0.0.0.0:" + std::to_string(port);

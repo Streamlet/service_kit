@@ -1,47 +1,55 @@
 #!/bin/sh
 
 DIR=$(cd $(dirname $0) && pwd)
-CMAKE_EXTRA_FLAGS="-DCMAKE_CXX_STANDARD=17"
 
+source $DIR/build_config.sh
 
-pushd $DIR/third_party
 
 echo "================================"
 echo "Building grpc ..."
-GRPC_INSTALL_DIR=$DIR/third_party/grpc/built
-mkdir -p $THIRD_PARTY_INSTALL_DIR
-mkdir -p grpc/cmake/build
-pushd grpc/cmake/build
+_GRPC_BUILD_DIR=$DIR/third_party/grpc/_build
+mkdir -p $_GRPC_BUILD_DIR
+pushd $_GRPC_BUILD_DIR
 cmake -DgRPC_INSTALL=ON \
       -DgRPC_BUILD_TESTS=OFF \
       -DCMAKE_INSTALL_PREFIX=$GRPC_INSTALL_DIR \
+      -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
       $CMAKE_EXTRA_FLAGS \
-      ../..
-make -j
+      ..
+make -j$CORE_COUNT
 make install
 popd
+
 
 echo "================================"
 echo "Building abseil ..."
-
-mkdir -p grpc/third_party/abseil-cpp/cmake/build
-pushd grpc/third_party/abseil-cpp/cmake/build
+_ABSEIL_BUILD_DIR=$DIR/third_party/grpc/third_party/abseil-cpp/_build
+mkdir -p $_ABSEIL_BUILD_DIR
+pushd $_ABSEIL_BUILD_DIR
 cmake -DCMAKE_INSTALL_PREFIX=$GRPC_INSTALL_DIR \
+      -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
       -DCMAKE_POSITION_INDEPENDENT_CODE=TRUE \
       $CMAKE_EXTRA_FLAGS \
-      ../..
-make -j
+      ..
+make -j$CORE_COUNT
 make install
 popd
 
+
 echo "================================"
 echo "Building boost ..."
-BOOST_INSTALL_DIR=$DIR/third_party/boost/built
 
-pushd boost
-./bootstrap.sh
-./b2 install link=static --prefix=$BOOST_INSTALL_DIR --with-program_options --with-log
-popd
-
-
+_BOOST_BUILD_DIR=$DIR/third_party/boost/_build
+pushd $DIR/third_party/boost
+if [ ! -f b2 ]; then
+    ./bootstrap.sh
+fi
+./b2 install \
+     link=static \
+     cxxflags="-std=c++17" \
+     variant=$BOOST_VARIANT \
+     --build-dir=$_BOOST_BUILD_DIR \
+     --prefix=$THIRD_PARTY_INSTALL_DIR \
+     --with-program_options \
+     --with-log
 popd

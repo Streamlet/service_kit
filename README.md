@@ -1,38 +1,46 @@
 # ServiceKit
 
-旨在用 C++ 技术实现服务端微服务框架
+Using C++ to build micro-service based backend frameworks and tools.
 
-## 构建步骤
+## Getting started
 
-### 下载第三方依赖
+### Download third-party libraries
 
 ```bash
 ./fetch_third_party.sh
 ```
 
-### 编译第三方库
+### Build third-party libraries
 
 ```bash
 ./build_third_party.sh
 ```
 
-### 编译示例程序
+### Build ServiceKit
+
+```bash
+./build_service_kit.sh
+```
+
+### Build samples
 
 ```bash
 ./build_sample.sh
 ```
 
-### 运行示例程序
+### Run sample
 
-注册中心：
+Run registry center:
 ```bash
-bin/registry_center [--port=50050]
+sample/bin/registry_center [--port=50050]
 ```
-服务端
+
+Run server side (service provider):
 ```bash
-bin/greeter_server [--registry_center=localhost:50050] [--port=50051]
+sample/bin/greeter_server [--registry_center=localhost:50050] [--port=50051]
 ```
-客户端
+
+Run client side (service consumer)
 ```bash
-bin/greeter_client [--registry_center=localhost:50050]
+sample/bin/greeter_client [--registry_center=localhost:50050]
 ```

@@ -5,7 +5,7 @@
 #include <grpcpp/grpcpp.h>
 
 #include "core/service_manager.h"
-#include "registry_center.grpc.pb.h"
+#include "protos/registry_center.grpc.pb.h"
 
 namespace registry_center {
 namespace grpc_impl {
