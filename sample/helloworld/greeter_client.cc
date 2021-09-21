@@ -5,7 +5,7 @@
 #include <string>
 
 #include "protos/helloworld.grpc.pb.h"
-#include "service_kit/service_manager_client.h"
+#include "service_kit/client_sdk.h"
 
 const char* OPTION_HELP = "help";
 const char* OPTION_REGISTRY_CENTER = "registry_center";
@@ -84,19 +84,18 @@ int main(int argc, char** argv) {
 
   std::string registry_center_address =
       vm[OPTION_REGISTRY_CENTER].as<std::string>();
-
-  service_kit::ServiceManagerClient service_manager_client(grpc::CreateChannel(
-      registry_center_address, grpc::InsecureChannelCredentials()));
-  std::string address;
-  if (!service_manager_client.Query<helloworld::Greeter>(&address)) {
+  std::string service_address;
+  if (!service_kit::client::QueryService(
+          registry_center_address, helloworld::Greeter::service_full_name(),
+          &service_address)) {
     std::cout << "No service provider found from " << registry_center_address
               << std::endl;
     return -1;
   }
-  std::cout << "Service provider: " << address << std::endl;
+  std::cout << "Service provider: " << service_address << std::endl;
 
   GreeterClient greeter(
-      grpc::CreateChannel(address, grpc::InsecureChannelCredentials()));
+      grpc::CreateChannel(service_address, grpc::InsecureChannelCredentials()));
   std::string user("world");
   std::string reply = greeter.SayHello(user);
   std::cout << "Greeter received: " << reply << std::endl;

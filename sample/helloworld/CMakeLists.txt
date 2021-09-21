@@ -15,11 +15,22 @@ foreach(_target
     target_link_libraries(${_target}
         rc_grpc_proto
         registry_center_proto
+        server_sdk
+        client_sdk
         boost_program_options
+        boost_filesystem
+        boost_thread
+        boost_regex
+        boost_log
+        boost_log_setup
         ${_REFLECTION}
         ${_GRPC_GRPCPP}
         ${_PROTOBUF_LIBPROTOBUF})
-    install(TARGETS ${_target} DESTINATION bin)
+    install(TARGETS ${_target}
+            DESTINATION bin
+            PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 endforeach()
 
-install(FILES ${SERVICE_KIT_INSTALL_DIR}/bin/registry_center DESTINATION bin)
+install(FILES ${SERVICE_KIT_INSTALL_DIR}/bin/registry_center
+        DESTINATION bin
+        PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)

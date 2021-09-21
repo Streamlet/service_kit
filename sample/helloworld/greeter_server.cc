@@ -6,7 +6,7 @@
 #include <string>
 
 #include "protos/helloworld.grpc.pb.h"
-#include "service_kit/service_registry_client.h"
+#include "service_kit/server_sdk.h"
 
 const char* OPTION_HELP = "help";
 const char* OPTION_REGISTRY_CENTER = "registry_center";
@@ -61,9 +61,6 @@ class GreeterServiceImpl final : public helloworld::Greeter::Service {
 };
 
 void RunServer(const std::string& registry_center_address, uint16_t port) {
-  service_kit::ServiceRegistryClient service_register(grpc::CreateChannel(
-      registry_center_address, grpc::InsecureChannelCredentials()));
-
   std::string server_address = "0.0.0.0:" + std::to_string(port);
   GreeterServiceImpl service;
 
@@ -79,7 +76,9 @@ void RunServer(const std::string& registry_center_address, uint16_t port) {
   std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
 
   // Register service to remote registry center
-  if (!service_register.Register<helloworld::Greeter>(port)) {
+  if (!service_kit::server::RegisterService(
+          registry_center_address, helloworld::Greeter::service_full_name(),
+          port)) {
     std::cout << "failed to register service to " << registry_center_address
               << std::endl;
     server->Shutdown();

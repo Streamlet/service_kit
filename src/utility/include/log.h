@@ -9,6 +9,6 @@
 #define ERROR() BOOST_LOG_TRIVIAL(error)
 #define FATAL() BOOST_LOG_TRIVIAL(fatal)
 
-namespace registry_center {
+namespace service_kit {
 bool InitializeLog();
 }
