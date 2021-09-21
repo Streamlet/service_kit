@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package service_kit.client;
+
+message ServiceIdentify {
+  string name = 1;
+}
+
+message ServiceProvider {
+  string address = 1;
+}
+
+service RegistryCenter {
+  rpc Query(ServiceIdentify) returns (ServiceProvider) {}
+}

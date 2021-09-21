@@ -4,8 +4,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+namespace service_kit {
 namespace registry_center {
-namespace core {
 
 class ServiceManager {
  public:
@@ -26,5 +26,5 @@ class ServiceManager {
       service_name_addresses_map_;
 };
 
-}  // namespace core
 }  // namespace registry_center
+}  // namespace service_kit

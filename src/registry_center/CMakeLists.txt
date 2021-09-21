@@ -19,8 +19,9 @@ target_link_libraries(registry_center
     ${_GRPC_GRPCPP}
     ${_PROTOBUF_LIBPROTOBUF})
 
-install(TARGETS registry_center DESTINATION bin)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/librc_grpc_proto.a DESTINATION lib RENAME libregistry_center_proto.a)
-install(FILES protos/registry_center.proto DESTINATION include/service_kit)
-install(FILES protos/registry_center.pb.h DESTINATION include/service_kit)
-install(FILES protos/registry_center.grpc.pb.h DESTINATION include/service_kit)
+install(TARGETS registry_center
+        DESTINATION bin
+        PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/librc_grpc_proto.a
+        DESTINATION lib
+        RENAME libregistry_center_proto.a)

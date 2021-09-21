@@ -3,7 +3,7 @@
 #include <boost/log/utility/setup/from_stream.hpp>
 #include <fstream>
 
-namespace registry_center {
+namespace service_kit {
 
 bool InitializeLog() {
   boost::log::add_common_attributes();
@@ -14,4 +14,4 @@ bool InitializeLog() {
   return true;
 }
 
-}  // namespace registry_center
+}  // namespace service_kit

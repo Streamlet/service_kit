@@ -3,7 +3,7 @@ syntax = "proto3";
 import "google/protobuf/descriptor.proto";
 import "google/protobuf/empty.proto";
 
-package service_kit;
+package service_kit.server;
 
 message ServiceIdentify {
   string name = 1;
@@ -25,16 +25,8 @@ message RegisterResult {
   string message = 2;
 }
 
-service ServiceRegistry {
+service RegistryCenter {
   rpc Register (ServiceDefinitionWithSignature) returns (RegisterResult) {}
   rpc HeartBeat (ServiceDefinition) returns (google.protobuf.Empty) {}
   rpc Unregister (ServiceDefinition) returns (google.protobuf.Empty) {}
-}
-
-message ServiceProvider {
-  string address = 1;
-}
-
-service ServiceManager {
-  rpc Query(ServiceIdentify) returns (ServiceProvider) {}
 }
