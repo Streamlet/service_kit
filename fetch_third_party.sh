@@ -2,6 +2,7 @@
 
 DIR=$(cd $(dirname $0) && pwd)
 
+mkdir $DIR/third_party
 pushd $DIR/third_party
 
 echo "================================"
