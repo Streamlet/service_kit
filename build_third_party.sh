@@ -16,8 +16,8 @@ cmake -DgRPC_INSTALL=ON \
       -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
       $CMAKE_EXTRA_FLAGS \
       ..
-make -j$CORE_COUNT
-make install
+cmake --build . --parallel %CORE_COUNT%
+cmake --install .
 popd
 
 
@@ -31,8 +31,8 @@ cmake -DCMAKE_INSTALL_PREFIX=$GRPC_INSTALL_DIR \
       -DCMAKE_POSITION_INDEPENDENT_CODE=TRUE \
       $CMAKE_EXTRA_FLAGS \
       ..
-make -j$CORE_COUNT
-make install
+cmake --build . --parallel %CORE_COUNT%
+cmake --install .
 popd
 
 
@@ -48,6 +48,8 @@ fi
      link=static \
      cxxflags="-std=c++17" \
      variant=$BOOST_VARIANT \
+     -j %CORE_COUNT% \
+     --layout=system \
      --build-dir=$_BOOST_BUILD_DIR \
      --prefix=$THIRD_PARTY_INSTALL_DIR \
      --with-program_options \

@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.5.1)
 
 set (CMAKE_CXX_STANDARD 17)
 
+if(MSVC)
+    add_definitions(-D_WIN32_WINNT=0x0600)
+    add_definitions(-DBOOST_ALL_NO_LIB)
+endif()
+
 if(NOT DEFINED GRPC_INSTALL_DIR)
     message("GRPC_INSTALL_DIR must be defined")
 endif()
@@ -20,9 +25,14 @@ link_directories("${GRPC_INSTALL_DIR}/lib")
 include_directories("${THIRD_PARTY_INSTALL_DIR}/include")
 link_directories("${THIRD_PARTY_INSTALL_DIR}/lib")
 
-set(Protobuf_DIR ${GRPC_INSTALL_DIR}/lib/cmake/protobuf)
+if(NOT MSVC)
+    set(Protobuf_DIR ${GRPC_INSTALL_DIR}/lib/cmake/protobuf)
+else()
+    set(Protobuf_DIR ${GRPC_INSTALL_DIR}/cmake)
+endif()
 set(gRPC_DIR ${GRPC_INSTALL_DIR}/lib/cmake/grpc)
 set(absl_DIR ${GRPC_INSTALL_DIR}/lib/cmake/absl)
+
 find_package(Threads)
 
 find_package(Protobuf CONFIG REQUIRED)
