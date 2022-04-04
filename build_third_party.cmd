@@ -5,8 +5,8 @@ set DIR=%~dp0
 call %DIR%build_config.cmd
 
 
-echo "================================"
-echo "Building grpc ..."
+echo ================================
+echo Building grpc ...
 set _GRPC_BUILD_DIR=%DIR%third_party\grpc\_build
 mkdir %_GRPC_BUILD_DIR%
 pushd %_GRPC_BUILD_DIR%
@@ -21,8 +21,8 @@ cmake --install . --config %CMAKE_BUILD_TYPE%
 popd
 
 
-echo "================================"
-echo "Building abseil ..."
+echo ================================
+echo Building abseil ...
 set _ABSEIL_BUILD_DIR=%DIR%third_party\grpc\third_party\abseil-cpp\_build
 mkdir %_ABSEIL_BUILD_DIR%
 pushd %_ABSEIL_BUILD_DIR%
@@ -36,8 +36,8 @@ cmake --install . --config %CMAKE_BUILD_TYPE%
 popd
 
 
-echo "================================"
-echo "Building boost ..."
+echo ================================
+echo Building boost ...
 
 set _BOOST_BUILD_DIR=%DIR%third_party\boost\_build
 pushd %DIR%third_party\boost

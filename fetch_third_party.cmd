@@ -5,9 +5,9 @@ set DIR=%~dp0
 mkdir %DIR%third_party
 pushd %DIR%third_party
 
-echo "================================"
-echo "Fetching grpc ...\c"
-set GRPC_VERSION=v1.43.0
+echo ================================
+echo Fetching grpc ...
+set GRPC_VERSION=v1.45.1
 if not exist grpc (
     echo .
     git clone --depth 1 --shallow-submodules --single-branch --recurse-submodules ^
@@ -19,8 +19,8 @@ if not exist grpc (
     popd
 )
 
-echo "================================"
-echo "Fetching boost ...\c"
+echo ================================
+echo Fetching boost ...
 set BOOST_VERSION=1.78.0
 if not exist boost (
     echo .

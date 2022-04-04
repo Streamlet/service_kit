@@ -7,7 +7,7 @@ pushd $DIR/third_party
 
 echo "================================"
 echo "Fetching grpc ...\c"
-GRPC_VERSION=v1.43.0
+GRPC_VERSION=v1.45.1
 if [ ! -d grpc ]; then
     echo
     git clone --depth 1 --shallow-submodules --single-branch --recurse-submodules \
