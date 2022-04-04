@@ -4,7 +4,7 @@ set DIR=%~dp0
 
 call %DIR%build_config.cmd
 
-mkdir -p %DIR%sample\helloworld\_build
+mkdir %DIR%sample\helloworld\_build
 pushd %DIR%sample\helloworld\_build
 cmake -DGRPC_INSTALL_DIR=%GRPC_INSTALL_DIR% ^
       -DBOOST_INSTALL_DIR=%BOOST_INSTALL_DIR% ^
