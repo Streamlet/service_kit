@@ -17,20 +17,37 @@ foreach(_target
         registry_center_proto
         server_sdk
         client_sdk
-        boost_program_options
-        boost_filesystem
-        boost_thread
-        boost_regex
-        boost_log
-        boost_log_setup
         ${_REFLECTION}
         ${_GRPC_GRPCPP}
         ${_PROTOBUF_LIBPROTOBUF})
+    if(NOT MSVC)
+        target_link_libraries(${_target}
+            boost_program_options
+            boost_filesystem
+            boost_thread
+            boost_regex
+            boost_log
+            boost_log_setup)
+    else()
+        target_link_libraries(${_target}
+            libboost_program_options
+            libboost_filesystem
+            libboost_thread
+            libboost_regex
+            libboost_log
+            libboost_log_setup)
+    endif()
     install(TARGETS ${_target}
             DESTINATION bin
             PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 endforeach()
 
-install(FILES ${SERVICE_KIT_INSTALL_DIR}/bin/registry_center
-        DESTINATION bin
-        PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+if(NOT MSVC)
+    install(FILES ${SERVICE_KIT_INSTALL_DIR}/bin/registry_center
+            DESTINATION bin
+            PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+else()
+    install(FILES ${SERVICE_KIT_INSTALL_DIR}/bin/registry_center.exe
+            DESTINATION bin
+            PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+endif()

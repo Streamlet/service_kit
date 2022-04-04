@@ -9,19 +9,37 @@ add_executable(registry_center ${sources})
 target_link_libraries(registry_center
     utility
     rc_grpc_proto
-    boost_program_options
-    boost_filesystem
-    boost_thread
-    boost_regex
-    boost_log
-    boost_log_setup
     ${_REFLECTION}
     ${_GRPC_GRPCPP}
     ${_PROTOBUF_LIBPROTOBUF})
+if(NOT MSVC)
+    target_link_libraries(registry_center
+        boost_program_options
+        boost_filesystem
+        boost_thread
+        boost_regex
+        boost_log
+        boost_log_setup)
+else()
+    target_link_libraries(registry_center
+        libboost_program_options
+        libboost_filesystem
+        libboost_thread
+        libboost_regex
+        libboost_log
+        libboost_log_setup
+        libboost_atomic)
+endif()
 
 install(TARGETS registry_center
         DESTINATION bin
         PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/librc_grpc_proto.a
-        DESTINATION lib
-        RENAME libregistry_center_proto.a)
+if(NOT MSVC)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/librc_grpc_proto.a
+            DESTINATION lib
+            RENAME libregistry_center_proto.a)
+else()
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/rc_grpc_proto.lib
+            DESTINATION lib
+            RENAME registry_center_proto.lib)
+endif()

@@ -47,8 +47,8 @@ bool ServiceManager::QueryService(const std::string& name,
   }
 
   const auto& addresses = it->second;
-  // TODO: 实现更多的负载均衡策略
-  // 当前用蓄水池抽样算法以 1/N 的概率找一个出来
+  // TODO: implement more load balance policies
+  // currently random find one with 1/N possibility
   int c = 0;
   for (const auto& addr : addresses) {
     if (std::rand() * (c + 1ULL) < RAND_MAX + 1ULL) {
