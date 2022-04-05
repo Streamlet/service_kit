@@ -5,11 +5,10 @@ DIR=$(cd $(dirname $0) && pwd)
 mkdir $DIR/third_party
 pushd $DIR/third_party
 
-echo "================================"
-echo "Fetching grpc ...\c"
+echo ================================
+echo Fetching grpc ...
 GRPC_VERSION=v1.45.1
 if [ ! -d grpc ]; then
-    echo
     git clone --depth 1 --shallow-submodules --single-branch --recurse-submodules \
         -b $GRPC_VERSION https://github.com/grpc/grpc
 else
@@ -19,15 +18,14 @@ else
     popd
 fi
 
-echo "================================"
-echo "Fetching boost ...\c"
+echo ================================
+echo Fetching boost ...
 BOOST_VERSION=1.78.0
 if [ ! -d boost ]; then
-    echo
-    curl -L https://boostorg.jfrog.io/artifactory/main/release/$BOOST_VERSION/source/boost_${BOOST_VERSION//./_}.tar.bz2 -o boost_${BOOST_VERSION//./_}.tar.bz2
-    tar -jxvf boost_${BOOST_VERSION//./_}.tar.bz2
+    curl -L https://boostorg.jfrog.io/artifactory/main/release/$BOOST_VERSION/source/boost_${BOOST_VERSION//./_}.tar.gz -o boost_${BOOST_VERSION//./_}.tar.gz
+    tar -zxvf boost_${BOOST_VERSION//./_}.tar.gz
     mv boost_${BOOST_VERSION//./_} boost
-    rm -rf boost_${BOOST_VERSION//./_}.tar.bz2
+    rm -rf boost_${BOOST_VERSION//./_}.tar.gz
 else
     echo exists
 fi

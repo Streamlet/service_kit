@@ -25,7 +25,7 @@ set BOOST_VERSION=1.78.0
 if not exist boost (
     echo .
     curl -L https://boostorg.jfrog.io/artifactory/main/release/%BOOST_VERSION%/source/boost_%BOOST_VERSION:.=_%.tar.gz -o boost_%BOOST_VERSION:.=_%.tar.gz
-    tar -jxvf boost_%BOOST_VERSION:.=_%.tar.gz
+    tar -zxvf boost_%BOOST_VERSION:.=_%.tar.gz
     rename boost_%BOOST_VERSION:.=_% boost
     del /s /q boost_%BOOST_VERSION:.=_%.tar.gz
 ) else (
