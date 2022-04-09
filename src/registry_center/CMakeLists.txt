@@ -9,27 +9,16 @@ add_executable(registry_center ${sources})
 target_link_libraries(registry_center
     utility
     rc_grpc_proto
+    boost_program_options
+    boost_filesystem
+    boost_thread
+    boost_regex
+    boost_log
+    boost_log_setup
+    boost_atomic
     ${_REFLECTION}
     ${_GRPC_GRPCPP}
     ${_PROTOBUF_LIBPROTOBUF})
-if(NOT MSVC)
-    target_link_libraries(registry_center
-        boost_program_options
-        boost_filesystem
-        boost_thread
-        boost_regex
-        boost_log
-        boost_log_setup)
-else()
-    target_link_libraries(registry_center
-        libboost_program_options
-        libboost_filesystem
-        libboost_thread
-        libboost_regex
-        libboost_log
-        libboost_log_setup
-        libboost_atomic)
-endif()
 
 install(TARGETS registry_center
         DESTINATION bin

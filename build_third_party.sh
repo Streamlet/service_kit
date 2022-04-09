@@ -44,11 +44,18 @@ pushd $DIR/third_party/boost
 if [ ! -f b2 ]; then
     ./bootstrap.sh
 fi
+
+if [ "$CORE_COUNT" != "" ]; then
+    _J_CORE_COUNT="-j $CORE_COUNT"
+else
+    _J_CORE_COUNT=''
+fi
+
 ./b2 install \
      link=static \
      cxxflags="-std=c++17" \
      variant=$BOOST_VARIANT \
-     -j $CORE_COUNT \
+     $_J_CORE_COUNT \
      --layout=system \
      --build-dir=$_BOOST_BUILD_DIR \
      --prefix=$THIRD_PARTY_INSTALL_DIR \
