@@ -13,7 +13,7 @@ grpc::Status RegistryCenter::Query(
     grpc::ServerContext* context,
     const service_kit::client::ServiceIdentify* request,
     service_kit::client::ServiceProvider* response) {
-  TRACE() << "Queri service " << request->name() << " from " << context->peer();
+  TRACE() << "Query service " << request->name() << " from " << context->peer();
 
   std::string address;
   if (!mgr_.QueryService(request->name(), &address)) {
