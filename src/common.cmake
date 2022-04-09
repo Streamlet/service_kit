@@ -76,3 +76,11 @@ if (${rc_proto_sources_length} GREATER 0)
         ${_GRPC_GRPCPP}
         ${_PROTOBUF_LIBPROTOBUF})
 endif()
+
+set(Boost_INCLUDE_DIR ${THIRD_PARTY_INSTALL_DIR}/include)
+find_package(Boost REQUIRED COMPONENTS program_options log)
+message(STATUS "Using Boost ${Boost_VERSION_STRING}")
+
+# TODO: Boost 时不时需要链接两遍才行，可能是内部顺序不合理，待查
+# 先在这里定义一个 _BOOST_LIBRARIES，外面直接引用，就不用写两遍填这个坑了
+set(_BOOST_LIBRARIES ${Boost_LIBRARIES} ${Boost_LIBRARIES})
