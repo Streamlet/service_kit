@@ -14,16 +14,11 @@ foreach(_target
     add_executable(${_target} "${_target}.cc")
 
     target_link_libraries(${_target}
-        rc_grpc_proto
-        registry_center_proto
         server_sdk
         client_sdk
-        boost_program_options
-        boost_filesystem
-        boost_thread
-        boost_regex
-        boost_log
-        boost_log_setup
+        rc_grpc_proto
+        registry_center_proto
+        ${_BOOST_LIBRARIES}
         ${_REFLECTION}
         ${_GRPC_GRPCPP}
         ${_PROTOBUF_LIBPROTOBUF})
