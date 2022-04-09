@@ -58,3 +58,8 @@ if not exist b2.exe (
      --with-log ^
      --with-atomic
 popd
+
+pushd %THIRD_PARTY_INSTALL_DIR%\lib
+del /S /Q boost_*.lib
+rename "libboost_*.lib" "///boost_*.lib"
+popd
